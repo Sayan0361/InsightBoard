@@ -3,10 +3,39 @@ import { motion } from "framer-motion";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
-
+import { registerUser } from "@/ConfigAPI";
+import { useNavigate } from "react-router-dom";
+ 
 export default function SignupPage() {
+    const navigate = useNavigate();
     const ref = useRef(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [userData, setUserData] = useState({
+        name: "",
+        email: "",
+        password: ""
+    });
+
+    const handleChange = (e) => {
+        const {name, value} = e.target; // input name and value
+        setUserData(prev => ({
+            ...prev,
+            [name] : value
+        }))
+    }
+
+    const handleSubmit = async (e)  => {
+        e.preventDefault();
+        const response = await registerUser(userData)
+        if(response) {
+            console.log("User registered successfully: ", response);
+            navigate("/")
+            // Redirect or show success message
+        } else {
+            console.log("User registration failed: ", response);
+            // Show error message
+        }
+    }
 
     return (
         <div className="flex min-h-screen">
@@ -105,15 +134,19 @@ export default function SignupPage() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
                     className="w-full space-y-4"
+                    onSubmit={handleSubmit}
                 >
                     <div>
                         <label className="block mb-1 text-sm">Full Name</label>
                         <input
                             type="text"
                             placeholder="John Doe"
+                            name="name"
                             className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:shadow-lg shadow-blue-500/30 
                         transition duration-300 ease-in-out"
+                            value={userData.name}
+                            onChange={handleChange}
                         />
                     </div>
 
@@ -122,9 +155,12 @@ export default function SignupPage() {
                         <input
                             type="email"
                             placeholder="Enter your email"
+                            name="email"
                             className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:shadow-lg shadow-blue-500/30 
                         transition duration-300 ease-in-out"
+                            value={userData.email}
+                            onChange={handleChange}
                         />
                     </div>
 
@@ -133,9 +169,12 @@ export default function SignupPage() {
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Enter your password"
+                            name="password"
                             className="w-full px-4 py-2 pr-10 bg-gray-800 border border-gray-600 rounded 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:shadow-lg shadow-blue-500/30 
                         transition duration-300 ease-in-out"
+                            value={userData.password}
+                            onChange={handleChange}
                         />
                         <button
                             type="button"

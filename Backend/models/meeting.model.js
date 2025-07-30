@@ -4,6 +4,7 @@ const meetingSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        required: true,
     },
 
     title: {
@@ -36,11 +37,6 @@ const meetingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Summary"
     },
-
-    createdAt: {
-        type: Date,
-        default: Date.now()
-    }
-})
+}, {timestamps: true});
 
 export default mongoose.model("Meeting", meetingSchema)

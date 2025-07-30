@@ -22,4 +22,5 @@ const verifyJWT = async(req, res, next) => {
     }
 }
 
+
 export {verifyJWT}

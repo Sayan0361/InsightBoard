@@ -3,7 +3,8 @@ import { motion, useInView } from "framer-motion"
 import { useNavigate } from 'react-router-dom'
 import Header from '@/components/Header'
 import Footer from '@/components/Footers'
-import sendMeetingText from '../ConfigAPI.js'
+import {sendMeetingText} from '../ConfigAPI.js'
+import { useAuth } from '@/lib/authContext'
 
 const GoPaste = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -29,7 +30,7 @@ const CloseIcon = () => (
   </svg>
 )
 
-function MainPage({isLoggedIn}) {
+function MainPage() {
     const navigate = useNavigate()
     const [inputText, setInputText] = useState('')
     const [isProcessing, setIsProcessing] = useState(false)
@@ -39,6 +40,7 @@ function MainPage({isLoggedIn}) {
     const containerRef = useRef(null)
     const fileInputRef = useRef(null)
     const isInView = useInView(containerRef, { once: true })
+    const {isLoggedIn, userId} = useAuth()
 
     const handleChange = (e) => {
         setInputText(e.target.value)
@@ -55,7 +57,7 @@ function MainPage({isLoggedIn}) {
         setIsProcessing(true)
         console.log(inputText);   
         try {
-            const response = await sendMeetingText(inputText)
+            const response = await sendMeetingText(inputText, userId)
             console.log(response);
             setInputText('')     
         } catch (error) {

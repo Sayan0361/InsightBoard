@@ -1,12 +1,50 @@
+import { loginUser } from "@/ConfigAPI";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { BiSolidShow } from "react-icons/bi";
 import { BiSolidHide } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/authContext";
+
 
 export default function LoginPage() {
     const ref = useRef(null)
     const [showPassword, setShowPassword] = useState(false)
+    const navigate = useNavigate()
+    const {setLoginStatus} = useAuth()
+
+    const [userData, setUserData] = useState({
+        email: "",
+        password: ""
+    })
+
+    const handleChange = (e) => {
+        const {name, value} = e.target
+        setUserData(prev => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            console.log("User data for login: ", userData);
+            const response = await loginUser(userData)
+            if(response.status === 200) {
+                console.log("User logged in successfully: ", response);
+                setLoginStatus(true)
+                navigate("/");
+                // Redirect or show success message
+            } else {
+                console.log("User login failed: ", response);
+                // Show error message
+            }
+        } catch (error) {
+            
+        }
+    }
+
     return (
         <div className="flex min-h-screen">
             {/* Left Section - Login Form */}
@@ -61,20 +99,29 @@ export default function LoginPage() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
                     className="w-full space-y-4"
+                    onSubmit={handleSubmit}
                 >
                     <div>
                         <label className="block mb-1 text-sm">Email</label>
                         <input
                             type="email"
                             placeholder="Enter your email"
-                            className="w-full px-4 py-2 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                            name="email"
+                            value={userData.email}
+                            className="w-full px-4 py-2 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                            onChange={handleChange}
+                            />
                     </div>
                     <div className='relative'>
                         <label className="block mb-1 text-sm">Password</label>
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Enter your password"
-                            className="w-full px-4 py-2 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                            name="password"
+                            value={userData.password}
+                            className="w-full px-4 py-2 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onChange={handleChange}
+                            />
                         <button
                             type="button"
                             onClick={() => setShowPassword((prev) => !prev)}

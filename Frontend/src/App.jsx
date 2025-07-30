@@ -17,14 +17,13 @@ function App() {
     return (
         <BrowserRouter>
             <div className="min-h-screen flex flex-col bg-zinc-950 font-['Inter','Noto Sans',sans-serif]">
-                <Header startShow={true} isLoggedIn={false} />
                 <div className="flex flex-col grow h-full w-full pt-10"> 
+                <Header startShow={true}/>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/main" element={<MainPage />} />
-                        {/* Not required as Clerk is integrated */}
-                        {/* <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignupPage />} /> */}
+                        <Route path="/main" element={<MainPage/>} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/signup" element={<SignupPage />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/pricing" element={<Pricing />} />
                     </Routes>

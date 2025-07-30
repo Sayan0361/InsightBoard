@@ -12,6 +12,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@clerk/express": "^1.7.12",
         "@inngest/agent-kit": "^0.8.3",
         "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",

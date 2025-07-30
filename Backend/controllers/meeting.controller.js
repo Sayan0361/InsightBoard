@@ -1,5 +1,6 @@
 import Meeting from "../models/meeting.model.js";
 import Summary from "../models/summary.model.js"
+import { fetchUser } from "./user.controller.js";
 
 import { inngest } from "../inngest/client.js"
 
@@ -8,13 +9,16 @@ export const saveMeetings = async (req, res) => {
     try {
         
         const {meetingText} = req.body;
+        const {userId} = req.user._id;
+        console.log("User ID: ", userId);
         // console.log("Meeting text in meeting controller: ", meetingText);
         
         if(!meetingText) return res.status(400).json({message: "Transcript unavailable"})
 
         const newMeeting = await Meeting.create({
             transcript: meetingText,
-            status: "processing"
+            status: "processing",
+            userId: req.user?._id || userId
         })
 
         console.log("Meeting created: ", newMeeting);

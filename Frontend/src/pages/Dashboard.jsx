@@ -3,14 +3,20 @@ import { AnimatePresence } from "framer-motion";
 import { SearchAndFilter } from "@/components/SearchAndFilter";
 import { SummaryList } from "@/components/SummaryList";
 import { SummaryDetail } from "@/components/SummaryDetail";
-import { summaries } from "@/constants";
+import { fetchSummary } from "@/ConfigAPI";
+import { useAuth } from "@/lib/authContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const [selectedSummary, setSelectedSummary] = useState(summaries[0]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
-  const [isMobile, setIsMobile] = useState(false);
-  const [mobileView, setMobileView] = useState("list");
+    const { isLoggedIn } = useAuth();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedFilter, setSelectedFilter] = useState("all");
+    const [isMobile, setIsMobile] = useState(false);
+    const [mobileView, setMobileView] = useState("list");
+    const [summaries, setSummaries] = useState([]);
+    const [selectedSummary, setSelectedSummary] = useState([]);
+
+    const navigate = useNavigate();
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -22,6 +28,37 @@ export default function Dashboard() {
     window.addEventListener('resize', checkIfMobile);
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
+
+  useEffect(() => {
+    const fetchSummaries = async () => {
+      const summariesData = await fetchSummary();
+      console.log('Summaries fetched successfully: ', summariesData.data.summaries);
+      if (summariesData) {
+        setSummaries(summariesData.data.summaries);
+        setSelectedSummary(summariesData.data.summaries[0]);
+      }
+    };
+    fetchSummaries();
+  }, []);
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] bg-gradient-to-br from-[#0B0B0F] via-[#0F0F16] to-[#12121A] text-white p-6 text-center">
+        <div className="max-w-md space-y-4">
+          <h2 className="text-2xl font-bold text-blue-400">Welcome to InsightBoard</h2>
+          <p className="text-gray-300">Please log in to access your dashboard and view your summaries.</p>
+          <button 
+            className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
+            onClick={() => {
+              navigate('/login');
+            }}
+          >
+            Log In
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] bg-gradient-to-br from-[#0B0B0F] via-[#0F0F16] to-[#12121A] text-white">
